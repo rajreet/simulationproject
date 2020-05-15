@@ -261,20 +261,34 @@ class Person{
         {
             this.state=1;
             covid.infectedCount++;
+            this.draw();
+        }
+    }
+
+    dead()
+    {
+        if(this.state!==2)
+        {
+            this.state=2;
+            covid.deathCount++;
+            this.draw();
         }
     }
     move(){
-        this.x+=Math.round(Math.random()*2-1);
-        this.y+=Math.round(Math.random()*2-1);
-        let boundary=nativeLand(this.x,this.y);
-        if(this.x>boundary[1]-(personSize+range))
-            this.x+=-(personSize+range);
-        if(this.x<boundary[3]+personSize+range)
-            this.x+=(personSize+range);
-        if(this.y>boundary[2]-(personSize+range))
-            this.y+=-(personSize+range);
-        if(this.y<boundary[0]+(personSize+range))
-            this.y+=(personSize+range);
+        if(this.state!==2)
+        {
+            this.x+=Math.round(Math.random()*2-1);
+            this.y+=Math.round(Math.random()*2-1);
+            let boundary=nativeLand(this.x,this.y);
+            if(this.x>boundary[1]-(personSize+range))
+                this.x+=-(personSize+range);
+            if(this.x<boundary[3]+personSize+range)
+                this.x+=(personSize+range);
+            if(this.y>boundary[2]-(personSize+range))
+                this.y+=-(personSize+range);
+            if(this.y<boundary[0]+(personSize+range))
+                this.y+=(personSize+range);
+        }
         this.draw();
     }
     draw(){
@@ -283,6 +297,8 @@ class Person{
             c.fillStyle='rgb(0,255,0)';
         else if(this.state===1)
             c.fillStyle='rgb(255,0,0)';
+        else if(this.state===2)
+            c.fillStyle='rgb(255,255,255)';
         c.arc(this.x,this.y,this.r,0,Math.PI*2,false);
         c.fill();
         c.closePath();
@@ -291,6 +307,11 @@ class Person{
     isInfected()
     {
         return this.state===1;
+    }
+
+    isDead()
+    {
+        return this.state===2;
     }
 }
 
@@ -318,6 +339,8 @@ for(let i=0;i<populationSize;i++){
 
 function checkRadius(person1,person2)
 {
+    if(person2.isDead())
+        return false;
     if(person2.x>=person1.x-person1.r && person2.x<=person1.x+person1.r)
     {
         if(person2.y>=person1.y-person1.r && person2.y<=person1.y+person1.r)
@@ -357,7 +380,8 @@ function animate(){
                 
             // }
 
-            population[i].move();
+            
+                population[i].move();
 
             if(population[i].isInfected())
             {
@@ -367,15 +391,33 @@ function animate(){
                     if(checkRadius(population[i],population[j]))
                     {
                         //infection rate 20%
-                        var rand2=Math.floor(Math.random() * 100) + 1;
+                        var rand=Math.floor(Math.random() * 100) + 1;
                         
-                        if(rand2<=20)
+                        if(rand<=20)
                             population[j].infected();
 
                     }
                 }
             }
         }
+
+        for(let i=0;i<populationSize;i++)
+        {
+            if(population[i].isInfected())
+            {
+                //death rate 0.01%
+                var rand=Math.floor(Math.random() * 10000) + 1;
+
+                if(rand<=1)
+                {
+                    population[i].dead();
+                    // populationSize--;
+                    // population.splice(i,1);
+                }
+            }
+        }
+
+        
     }
 }
 animate();
