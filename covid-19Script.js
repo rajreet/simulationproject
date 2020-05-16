@@ -421,20 +421,20 @@ function animate(){
         {
             if(population[i].isInfected())
             {
-                //death rate 0.05%
+                //death rate 0.03%
                 var rand=Math.floor(Math.random() * 10000) + 1;
 
-                if(rand<=5)
+                if(rand<=3)
                 {
                     population[i].dead();
                     // populationSize--;
                     // population.splice(i,1);
                 }
 
-                //recovery rate 0.05%
+                //recovery rate 0.03%
                 var rand=Math.floor(Math.random() * 10000) + 1;
 
-                if(rand<=5)
+                if(rand<=3)
                 {
                     population[i].recover();
                     // populationSize--;
@@ -446,7 +446,8 @@ function animate(){
 }
 animate();
 
-var dps = []; // dataPoints
+var dpsinf = []; // dataPoints
+var dpsdead = [];
 var chart = new CanvasJS.Chart("chartContainer", {
 	title :{
 		text: "Covid-19 Simulation"
@@ -454,15 +455,31 @@ var chart = new CanvasJS.Chart("chartContainer", {
 	axisY: {
         includeZero: false,
         
-	},      
-	data: [{
-        lineColor:"red",
-		type: "line",
-		dataPoints: dps
-	}]
+    },
+    axisX: {
+        title: "Days passed"
+    },      
+	data: [
+        {
+            lineColor:"red",
+		    type: "line",
+		    dataPoints: dpsinf
+        },
+        {
+            lineColor:"black",
+		    type: "line",
+		    dataPoints: dpsdead
+        }
+
+]
 });
 
-dps.push({
+//initialize datapoints
+dpsinf.push({
+    x: 0,
+    y: 0
+});
+dpsdead.push({
     x: 0,
     y: 0
 });
@@ -470,11 +487,23 @@ function updateChart() {
 
     var xval=time.day;
     var yval=covid.infectedCount;
-    if(dps[dps.length-1].x===xval)
-        dps[dps.length-1].y=yval
+    if(dpsinf[dpsinf.length-1].x===xval)
+        dpsinf[dpsinf.length-1].y=yval
     else
     {
-        dps.push({
+        dpsinf.push({
+            x: xval,
+            y: yval
+        });
+    }
+
+    // var xval=time.day;
+    yval=covid.deadCount;
+    if(dpsdead[dpsdead.length-1].x===xval)
+        dpsdead[dpsdead.length-1].y=yval
+    else
+    {
+        dpsdead.push({
             x: xval,
             y: yval
         });
