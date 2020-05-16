@@ -28,7 +28,7 @@ window.addEventListener('mousemove',function(el){
 })
 
 //setting up the canvas
-let canvas=document.querySelector('canvas');
+let canvas=document.querySelector('#canvas');
 canvas.width=innerWidth;
 canvas.height=innerHeight-100;
 canvas.style.background='rgb(50,50,50)';
@@ -272,6 +272,7 @@ class Person{
         {
             this.state=2;
             covid.deathCount++;
+            covid.infectedCount--;
             this.draw();
         }
     }
@@ -282,6 +283,7 @@ class Person{
         {
             this.state=3;
             covid.recoverCount++;
+            covid.infectedCount--;
             this.draw();
 
         }
@@ -369,6 +371,7 @@ function checkRadius(person1,person2)
     return false;
 }
 
+
 //Animate Function
 function animate(){
     if(stop==1){
@@ -380,7 +383,9 @@ function animate(){
         return;
     }
     else if(resume==1){
+        
         requestId=window.requestAnimationFrame(animate);
+        requestId=window.requestAnimationFrame(updateChart);
         c.clearRect(0,0,canvas.width,canvas.height);
         forwardTime();
         document.querySelector("#days").innerHTML="Days - "+time.day;
@@ -416,29 +421,80 @@ function animate(){
         {
             if(population[i].isInfected())
             {
-                //death rate 0.01%
+                //death rate 0.05%
                 var rand=Math.floor(Math.random() * 10000) + 1;
 
-                if(rand<=1)
+                if(rand<=5)
                 {
                     population[i].dead();
                     // populationSize--;
                     // population.splice(i,1);
                 }
 
-                //recovery rate 0.01%
+                //recovery rate 0.05%
                 var rand=Math.floor(Math.random() * 10000) + 1;
 
-                if(rand<=1)
+                if(rand<=5)
                 {
                     population[i].recover();
                     // populationSize--;
                     // population.splice(i,1);
                 }
             }
-        }
-
-        
-    }
+        }      
+    }  
 }
 animate();
+
+var dps = []; // dataPoints
+var chart = new CanvasJS.Chart("chartContainer", {
+	title :{
+		text: "Covid-19 Simulation"
+	},
+	axisY: {
+        includeZero: false,
+        
+	},      
+	data: [{
+        lineColor:"red",
+		type: "line",
+		dataPoints: dps
+	}]
+});
+
+dps.push({
+    x: 0,
+    y: 0
+});
+function updateChart() {
+
+    var xval=time.day;
+    var yval=covid.infectedCount;
+    if(dps[dps.length-1].x===xval)
+        dps[dps.length-1].y=yval
+    else
+    {
+        dps.push({
+            x: xval,
+            y: yval
+        });
+    }
+	// count = count || 1;
+
+	// for (var j = 0; j < count; j++) {
+	// 	yVal = yVal +  Math.round(5 + Math.random() *(-5-5));
+		
+	// 	xVal++;
+	// }
+
+	// if (dps.length > dataLength) {
+	// 	dps.shift();
+	// }
+
+	chart.render();
+};
+
+
+
+
+
