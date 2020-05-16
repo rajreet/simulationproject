@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width , initial-scale=1.0"/>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                margin: 0;
+                padding: 0;
+                display: flex;
+            }
+            .row{
+                margin:10px;
+            }
+        </style>
+        <title>COVID-19 Simulation</title>
+    </head>
+    <body>
+        <div class="container" >
+            <canvas class="canvas"></canvas>
+        </div>
+        <div class="controls-container">
+            <div class="row">
+            <button id="pause" class="col">Pause</button>
+            <button id="resume" class="col">Resume</button>
+            <button id="stop" class="col">Stop</button>
+            <button id="stage1" class="col">Lockdown Stage-1</button>
+            <button id="stage2" class="col">Lockdown Stage-2</button>
+            <button id="stage3" class="col">Lockdown Stage-3</button>
+            <button id="removeLockdown" class="col">Lockdown Remove</button>
+            </div>
+            <div class="row">
+                <h5 id="days" class="col">Days - </h5>
+            </div>
+            <div class="row">
+                <h5 id="total-cases" class="col">Total Infected - </h5>
+                <h5 class="col">Infection Rate: 50%</h5>
+                <h5 class="col">Infected Color: Red</h5>
+            </div>
+            <div class="row">
+                <h5 id="total-deaths" class="col">Total Deaths - </h5>
+                <h5 class="col">Death Rate: 0.01%</h5>
+                <h5 class="col">Death Color: White</h5>
+            </div>
+            <div class="row">
+                <h5 id="total-recovered" class="col">Total Recovered - </h5>
+                <h5 class="col">Recovery Rate: 0.01%</h5>
+                <h5 class="col">Recovered Color: Blue</h5>
+            </div>
+            <div class="row">
+                <h5 class="col">Initial infected: 10</h5>
+            </div>
+            
+            
+            
+
+        </div>
+        <script src="covid-19Script.js"></script>
+    </body>
+</html>

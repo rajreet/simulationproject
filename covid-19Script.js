@@ -42,9 +42,9 @@ let lockStage1=document.querySelector("#stage1");
 let lockStage2=document.querySelector("#stage2");
 let lockStage3=document.querySelector("#stage3");
 let lockRemove=document.querySelector("#removeLockdown");
-let days=document.querySelector("#days");
-let infected=document.querySelector("#total-cases");
-let deaths=document.querySelector("#total-deaths");
+// let days=document.querySelector("#days");
+// let infected=document.querySelector("#total-cases");
+// let deaths=document.querySelector("#total-deaths");
 let mouse={
     x: canvas.width,
     y: canvas.height
@@ -55,7 +55,7 @@ let resume=1;
 let stop=0;
 let populationSize=2000;                                                 //changable
 let personSize=2;                                                        //changable
-let range=1;                                                             //changable
+let range=5;                                                             //changable
 let leftBoundary=canvas.width/4,rightBoundary=canvas.width*3/4;          //changable
 let horizontalUnitLand=(rightBoundary-leftBoundary)/3;
 let verticalUnitLand=(canvas.height)/3;
@@ -63,7 +63,8 @@ covid={
     infectiveDistance: personSize*2+range,
     R0: 0.2,
     infectedCount: 0,
-    deathCount: 0
+    deathCount: 0,
+    recoverCount: 0
 };
 lockdown={
     stage1: 0,
@@ -274,6 +275,17 @@ class Person{
             this.draw();
         }
     }
+
+    recover()
+    {
+        if(this.state!==3)
+        {
+            this.state=3;
+            covid.recoverCount++;
+            this.draw();
+
+        }
+    }
     move(){
         if(this.state!==2)
         {
@@ -299,6 +311,8 @@ class Person{
             c.fillStyle='rgb(255,0,0)';
         else if(this.state===2)
             c.fillStyle='rgb(255,255,255)';
+        else if(this.state===3)
+            c.fillStyle='rgb(0,0,255)';
         c.arc(this.x,this.y,this.r,0,Math.PI*2,false);
         c.fill();
         c.closePath();
@@ -312,6 +326,11 @@ class Person{
     isDead()
     {
         return this.state===2;
+    }
+
+    isRecovered()
+    {
+        return this.state===3;
     }
 }
 
@@ -339,11 +358,11 @@ for(let i=0;i<populationSize;i++){
 
 function checkRadius(person1,person2)
 {
-    if(person2.isDead())
+    if(person2.isDead() || person2.isRecovered())
         return false;
-    if(person2.x>=person1.x-person1.r && person2.x<=person1.x+person1.r)
+    if(person2.x>=person1.x-range && person2.x<=person1.x+range)
     {
-        if(person2.y>=person1.y-person1.r && person2.y<=person1.y+person1.r)
+        if(person2.y>=person1.y-range && person2.y<=person1.y+range)
             return true;
     }
 
@@ -364,24 +383,16 @@ function animate(){
         requestId=window.requestAnimationFrame(animate);
         c.clearRect(0,0,canvas.width,canvas.height);
         forwardTime();
-        days.innerHTML="Days - "+time.day;
-        infected.innerHTML="Total Infected - "+covid.infectedCount;
-        deaths.innerHTML="Total Deaths - "+covid.deathCount;
+        document.querySelector("#days").innerHTML="Days - "+time.day;
+        document.querySelector("#total-cases").innerHTML="Total Infected - "+covid.infectedCount;
+        document.querySelector("#total-deaths").innerHTML="Total Deaths - "+covid.deathCount;
+        document.querySelector("#total-recovered").innerHTML="Total Recovered - "+covid.recoverCount;
         boundaries.drawBoundaries();
 
         for(let i=0;i<populationSize;i++)
         {
-            //new infections arise 0.001%
-            // var rand=Math.floor(Math.random() * 10000) + 1;
-
-            // if(rand===1)
-            // {
-            //     population[i].infected();
-                
-            // }
-
             
-                population[i].move();
+            population[i].move();
 
             if(population[i].isInfected())
             {
@@ -393,7 +404,7 @@ function animate(){
                         //infection rate 20%
                         var rand=Math.floor(Math.random() * 100) + 1;
                         
-                        if(rand<=20)
+                        if(rand<=50)
                             population[j].infected();
 
                     }
@@ -411,6 +422,16 @@ function animate(){
                 if(rand<=1)
                 {
                     population[i].dead();
+                    // populationSize--;
+                    // population.splice(i,1);
+                }
+
+                //recovery rate 0.01%
+                var rand=Math.floor(Math.random() * 10000) + 1;
+
+                if(rand<=1)
+                {
+                    population[i].recover();
                     // populationSize--;
                     // population.splice(i,1);
                 }
