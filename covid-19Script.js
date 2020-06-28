@@ -1,3 +1,5 @@
+alert("The site is not Mobile Responsive yet. For best results use Desktop or Desktop Mode on mobile.")
+
 //utilities
 //1.
 function randomNumber(min,max){
@@ -344,13 +346,9 @@ for(let i=0;i<populationSize;i++){
     let r=personSize;
     let color=0;
 
-    // if(i%200===0)
-    //   color=1;
     
     population.push(new Person(x,y,r,color));
 
-    // if(i%200===0)
-    //   population[i].infected();
 }
 
 for(let i=0;i<populationSize;i++){
@@ -497,7 +495,7 @@ function updateChart() {
         });
     }
 
-    // var xval=time.day;
+    // var xval=t
     yval=covid.deadCount;
     if(dpsdead[dpsdead.length-1].x===xval)
         dpsdead[dpsdead.length-1].y=yval
@@ -508,17 +506,6 @@ function updateChart() {
             y: yval
         });
     }
-	// count = count || 1;
-
-	// for (var j = 0; j < count; j++) {
-	// 	yVal = yVal +  Math.round(5 + Math.random() *(-5-5));
-		
-	// 	xVal++;
-	// }
-
-	// if (dps.length > dataLength) {
-	// 	dps.shift();
-	// }
 
 	chart.render();
 };
